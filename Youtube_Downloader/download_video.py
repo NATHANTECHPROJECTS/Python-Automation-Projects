@@ -1,34 +1,31 @@
 import yt_dlp
+import os
 
-def download_video(url, download_path, audio_only=False):
-    # Configure Options
+def download_video(url, download_path, audio_only=False, logger=None):
+    base = {
+        'outtmpl': os.path.join(download_path, '%(playlist_index)s - %(title)s.%(ext)s'),
+        'noplaylist': False,
+        'nooverwrites': True,
+    }
 
     if audio_only:
-        # For audio Only
         ydl_options = {
+            **base,
             'format': 'bestaudio/best',
-            'outtmpl': f'{download_path}/%(playlist_index)s - %(title)s.%(ext)s',
-            'noplaylist' : False,
-            'nooverwrites': True,
             'postprocessors': [{
-                'key': 'FFmpegExtractAudio', # To Extract audio as mp3 
+                'key': 'FFmpegExtractAudio',
                 'preferredcodec': 'mp3',
                 'preferredquality': '192',
             }],
         }
     else:
-        # For video and audio
         ydl_options = {
-        'format' : 'bestvideo+bestaudio/best', 
-        'outtmpl' : download_path + r'\%(playlist_index)s - %(title)s.%(ext)s',
-        'noplaylist' : False,
-        'nooverwrites': True,
-    }
+            **base,
+            'format': 'bestvideo+bestaudio/best',
+        }
 
-    try:
-        with yt_dlp.YoutubeDL(ydl_options) as ydl:
-            print("Downloading video...")
-            ydl.download([url])
-            print("\nDownload Completed Successfully!")
-    except Exception as e:
-        print(f"An error {e} occurred while downloading the video")
+    if logger:
+        ydl_options['logger'] = logger
+
+    with yt_dlp.YoutubeDL(ydl_options) as ydl:
+        ydl.download([url])
