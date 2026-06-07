@@ -1,9 +1,13 @@
 import tkinter as tk
 from tkinter import filedialog, scrolledtext
-import threading
+import threading # For background downloading
+
+from download_video import download_video
+from renaming_playlist import rename_existing_playlist
+from folder_picker import pick_folder
 
 
-class GUILogger:
+class GUILogger: # Captures messages (debug, info, warning, error) and displays them in the app's output box instead of the terminal
     def __init__(self, app):
         self.app = app
 
@@ -21,8 +25,8 @@ class GUILogger:
         self.app.log(f"Error: {msg}")
 
 
-    class App(tk.Tk):
-    def __init__(self):
+class App(tk.Tk):
+    def __init__(self):  # Initialize the 
         super().__init__()
         self.title("YouTube Downloader")
         self.resizable(False, False)
@@ -68,7 +72,7 @@ class GUILogger:
             self.log("Please enter a URL.")
             return
 
-        folder = filedialog.askdirectory(title="Choose the download folder")
+        folder = pick_folder()
         if not folder:
             self.log("No folder selected.")
             return
