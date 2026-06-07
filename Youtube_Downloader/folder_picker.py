@@ -5,7 +5,7 @@ from tkinter import filedialog # Create a simple GUI to select the download path
 def pick_folder():
     root = tk.Tk()
     root.withdraw()
-    root.attributes('-topmost', True)
+    root.attributes('-topmost', True)  # To ensure the diaog appears on to of all the others
     folder = filedialog.askdirectory(title = "Choose the download folder")
     root.destroy()
     return folder
